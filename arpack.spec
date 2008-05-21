@@ -3,8 +3,8 @@
 Summary: Fortran77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 2.1
-Release: 7%{?dist}
-License: Freely distributable
+Release: 8%{?dist}
+License: RiceBSD
 Group: Development/Libraries
 URL: http://www.caam.rice.edu/software/ARPACK/
 Source0: http://www.caam.rice.edu/software/ARPACK/SRC/arpack96.tar.gz
@@ -109,6 +109,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Wed May 21 2008 Tom "spot" Callaway <tcallawa@redhat.com> 2.1-8
+- fix license tag
+
 * Wed Oct 24 2007 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> 2.1-7
 - apply Frederic Hecht's patch for eigenvalue bug
 - move static libs to separate package
