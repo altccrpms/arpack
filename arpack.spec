@@ -3,7 +3,7 @@
 Summary: Fortran77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 2.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: RiceBSD
 Group: Development/Libraries
 URL: http://www.caam.rice.edu/software/ARPACK/
@@ -56,7 +56,7 @@ library and so links used for building arpack based applications.
 
 %prep
 %setup -q -b 1 -n ARPACK
-%patch -p1 -b .rh
+%patch0 -p1 -b .rh
 %patch1 -p1 -b .sb
 mkdir static shared
 
@@ -109,6 +109,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Mon Aug 25 2008 Axel Thimm <Axel.Thimm@ATrpms.net> - 2.1-9
+- Patch0 and %%patch make recent rpm silenty fail.
+
 * Wed May 21 2008 Tom "spot" Callaway <tcallawa@redhat.com> 2.1-8
 - fix license tag
 
