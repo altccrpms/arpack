@@ -3,7 +3,7 @@
 Summary: Fortran77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 2.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: RiceBSD
 Group: Development/Libraries
 URL: http://www.caam.rice.edu/software/ARPACK/
@@ -16,6 +16,7 @@ Source4: clarification-note-by-authors.txt
 Patch0: arpack-2.1-redhat.patch
 # see http://www.ann.jussieu.fr/pipermail/freefempp/2006/000213.html
 Patch1: arpack-second-bug.patch
+Patch2: arpack-etime.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: %{?with_gfortran:gcc-gfortran}%{!?with_gfortran:/usr/bin/f77}
 # The correct dependency would be the following, but it doesn't exist on RHEL4/3
@@ -58,6 +59,7 @@ library and so links used for building arpack based applications.
 %setup -q -b 1 -n ARPACK
 %patch0 -p1 -b .rh
 %patch1 -p1 -b .sb
+%patch2 -p1 -b .etime
 mkdir static shared
 
 %build
@@ -109,6 +111,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Wed Sep 24 2008 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> 2.1-10
+- fix libarpack.so: undefined reference to `etime_' with recent gfortran
+
 * Mon Aug 25 2008 Axel Thimm <Axel.Thimm@ATrpms.net> - 2.1-9
 - Patch0 and %%patch make recent rpm silenty fail.
 
