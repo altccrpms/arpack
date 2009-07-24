@@ -3,7 +3,7 @@
 Summary: Fortran77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 2.1
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: RiceBSD
 Group: Development/Libraries
 URL: http://www.caam.rice.edu/software/ARPACK/
@@ -111,6 +111,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1-12
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1-11
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
