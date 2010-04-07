@@ -3,16 +3,13 @@
 Summary: Fortran77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 2.1
-Release: 12%{?dist}
-License: RiceBSD
+Release: 11%{?dist}
+License: BSD
 Group: Development/Libraries
 URL: http://www.caam.rice.edu/software/ARPACK/
 Source0: http://www.caam.rice.edu/software/ARPACK/SRC/arpack96.tar.gz
 Source1: http://www.caam.rice.edu/software/ARPACK/SRC/patch.tar.gz
-Source2: http://www.caam.rice.edu/software/ARPACK/RiceBSD.doc
-Source3: RiceBSD.txt
-# https://bugzilla.redhat.com/bugzilla/attachment.cgi?id=148107
-Source4: clarification-note-by-authors.txt
+Source2: http://www.caam.rice.edu/software/ARPACK/RiceBSD.txt
 Patch0: arpack-2.1-redhat.patch
 # see http://www.ann.jussieu.fr/pipermail/freefempp/2006/000213.html
 Patch1: arpack-second-bug.patch
@@ -88,7 +85,7 @@ install -p -m644 static/libarpack.a %{buildroot}%{_libdir}
 install -p -m755 shared/libarpack.so.2.1 %{buildroot}%{_libdir}
 ln -s libarpack.so.2.1 %{buildroot}%{_libdir}/libarpack.so.2
 ln -s libarpack.so.2 %{buildroot}%{_libdir}/libarpack.so
-cp -p %{SOURCE2} %{SOURCE3} %{SOURCE4} .
+cp -p %{SOURCE2} .
 
 %clean
 rm -rf %{buildroot}
@@ -99,7 +96,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc RiceBSD.doc clarification-note-by-authors.txt
+%doc RiceBSD.txt
 %{_libdir}/libarpack.so.*
 
 %files devel
@@ -111,11 +108,8 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
-* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1-12
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
-
-* Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1-11
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+* Wed Apr  7 2010 Axel Thimm <Axel.Thimm@ATrpms.net> - 2.1-11
+- Change license to BSD (see RH bugs #234191 and #578873).
 
 * Wed Sep 24 2008 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> 2.1-10
 - fix libarpack.so: undefined reference to `etime_' with recent gfortran
