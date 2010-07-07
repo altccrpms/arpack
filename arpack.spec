@@ -1,9 +1,7 @@
-%bcond_without gfortran
-
 Summary: Fortran77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 2.1
-Release: 11%{?dist}
+Release: 13%{?dist}
 License: BSD
 Group: Development/Libraries
 URL: http://www.caam.rice.edu/software/ARPACK/
@@ -15,10 +13,8 @@ Patch0: arpack-2.1-redhat.patch
 Patch1: arpack-second-bug.patch
 Patch2: arpack-etime.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires: %{?with_gfortran:gcc-gfortran}%{!?with_gfortran:/usr/bin/f77}
-# The correct dependency would be the following, but it doesn't exist on RHEL4/3
-#BuildRequires: lapack-devel
-BuildRequires: %{_libdir}/liblapack.so
+BuildRequires: gcc-gfortran
+BuildRequires: lapack-devel
 
 %description
 ARPACK is a collection of Fortran77 subroutines designed to solve large 
@@ -63,7 +59,7 @@ mkdir static shared
 cd shared
 for dir in ../SRC ../UTIL; do
   make -f $dir/Makefile VPATH=$dir srcdir=$dir \
-       %{?with_gfortran:FC=gfortran} FFLAGS="%{optflags} -fPIC" \
+       FC=gfortran FFLAGS="%{optflags} -fPIC" \
        single double complex complex16
 done
 gcc -shared -llapack -Wl,-soname,libarpack.so.2 -o libarpack.so.2.1 *.o
@@ -71,7 +67,7 @@ cd ..
 cd static
 for dir in ../SRC ../UTIL; do
   make -f $dir/Makefile VPATH=$dir srcdir=$dir \
-  %{?with_gfortran:FC=gfortran} FFLAGS="%{optflags}" LDFLAGS="-s" \
+       FC=gfortran FFLAGS="%{optflags}" LDFLAGS="-s" \
        all
 done
 ar rv libarpack.a *.o
@@ -108,6 +104,11 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Wed Jul  7 2010 Jussi Lehtola <jussilehtola@fedoraproject.org> - 2.1-13
+- Get rid of build conditionals related to EPEL 3/4 for which have not been
+  branched.
+- Bump spec to fix update path.
+
 * Wed Apr  7 2010 Axel Thimm <Axel.Thimm@ATrpms.net> - 2.1-11
 - Change license to BSD (see RH bugs #234191 and #578873).
 
