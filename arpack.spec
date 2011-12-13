@@ -1,27 +1,26 @@
-%bcond_without gfortran
-
-Summary: Fortran77 subroutines for solving large scale eigenvalue problems
+Summary: Fortran 77 subroutines for solving large scale eigenvalue problems
 Name: arpack
-Version: 2.1
-Release: 13%{?dist}
+Version: 3.0.1
+Release: 1%{?dist}
 License: BSD
 Group: Development/Libraries
-URL: http://www.caam.rice.edu/software/ARPACK/
-Source0: http://www.caam.rice.edu/software/ARPACK/SRC/arpack96.tar.gz
-Source1: http://www.caam.rice.edu/software/ARPACK/SRC/patch.tar.gz
-Source2: http://www.caam.rice.edu/software/ARPACK/RiceBSD.txt
-Patch0: arpack-2.1-redhat.patch
-# see http://www.ann.jussieu.fr/pipermail/freefempp/2006/000213.html
-Patch1: arpack-second-bug.patch
-Patch2: arpack-etime.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires: %{?with_gfortran:gcc-gfortran}%{!?with_gfortran:/usr/bin/f77}
+URL: http://forge.scilab.org/index.php/p/arpack-ng/
+Source0: http://forge.scilab.org/upload/arpack-ng/files/arpack_%{version}.tar.gz
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+%if 0%{?rhel} == 4
 # The correct dependency would be the following, but it doesn't exist on RHEL4/3
 #BuildRequires: lapack-devel
-BuildRequires: %{_libdir}/liblapack.so
+BuildRequires: gcc-g77
+BuildRequires: lapack
+%else
+BuildRequires: gcc-gfortran
+BuildRequires: atlas-devel
+%endif
+
+Provides: arpack-ng = %{version}-%{release}
 
 %description
-ARPACK is a collection of Fortran77 subroutines designed to solve large 
+ARPACK is a collection of Fortran 77 subroutines designed to solve large 
 scale eigenvalue problems. 
 
 The package is designed to compute a few eigenvalues and corresponding
@@ -36,56 +35,52 @@ Restarted Arnoldi Method (IRAM).
 Summary: Files needed for developing arpack based applications
 Group: Development/Libraries
 Requires: arpack = %{version}-%{release}
+Provides: arpack-ng-devel = %{version}-%{release}
 
 %description devel
-ARPACK is a collection of Fortran77 subroutines designed to solve
+ARPACK is a collection of Fortran 77 subroutines designed to solve
 large scale eigenvalue problems. This package contains the so
 library links used for building arpack based applications.
+
+%package doc
+Summary: Examples for the use of arpack
+Group: Documentation
+%if 0%{?rhel} > 5 || 0%{?fedora} > 12
+BuildArch: noarch
+%endif
+
+%description doc
+This package contains examples for the use of arpack.
 
 %package static
 Summary: Static library for developing arpack based applications
 Group: Development/Libraries
 Requires: arpack-devel = %{version}-%{release}
+Provides: arpack-ng-static = %{version}-%{release}
 
 %description static
-ARPACK is a collection of Fortran77 subroutines designed to solve
+ARPACK is a collection of Fortran 77 subroutines designed to solve
 large scale eigenvalue problems. This package contains the static
 library and so links used for building arpack based applications.
 
 %prep
-%setup -q -b 1 -n ARPACK
-%patch0 -p1 -b .rh
-%patch1 -p1 -b .sb
-%patch2 -p1 -b .etime
-mkdir static shared
+%setup -q -n arpack-ng-%{version} 
 
 %build
-cd shared
-for dir in ../SRC ../UTIL; do
-  make -f $dir/Makefile VPATH=$dir srcdir=$dir \
-       %{?with_gfortran:FC=gfortran} FFLAGS="%{optflags} -fPIC" \
-       single double complex complex16
-done
-gcc -shared -llapack -Wl,-soname,libarpack.so.2 -o libarpack.so.2.1 *.o
-cd ..
-cd static
-for dir in ../SRC ../UTIL; do
-  make -f $dir/Makefile VPATH=$dir srcdir=$dir \
-  %{?with_gfortran:FC=gfortran} FFLAGS="%{optflags}" LDFLAGS="-s" \
-       all
-done
-ar rv libarpack.a *.o
-ranlib libarpack.a
-cd ..
+%{configure} --enable-shared --enable-static \
+%if 0%{?rhel} == 4
+ --with-blas="-lblas" --with-lapack="-llapack"
+%else
+ --with-blas="-L%{_libdir}/atlas -lf77blas -latlas" --with-lapack="-L%{_libdir}/atlas -llapack -latlas"
+%endif
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}%{_libdir}
-install -p -m644 static/libarpack.a %{buildroot}%{_libdir}
-install -p -m755 shared/libarpack.so.2.1 %{buildroot}%{_libdir}
-ln -s libarpack.so.2.1 %{buildroot}%{_libdir}/libarpack.so.2
-ln -s libarpack.so.2 %{buildroot}%{_libdir}/libarpack.so
-cp -p %{SOURCE2} .
+make install DESTDIR=%{buildroot}
+
+# Get rid of .la files
+rm -rf %{buildroot}%{_libdir}/*.la
 
 %clean
 rm -rf %{buildroot}
@@ -96,7 +91,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc RiceBSD.txt
+%doc CHANGES COPYING
 %{_libdir}/libarpack.so.*
 
 %files devel
@@ -104,10 +99,19 @@ rm -rf %{buildroot}
 %doc DOCUMENTS EXAMPLES
 %{_libdir}/libarpack.so
 
+%files doc
+%defattr(-,root,root,-)
+%doc EXAMPLES/ DOCUMENTS/
+
 %files static
+%defattr(-,root,root,-)
 %{_libdir}/libarpack.a
 
 %changelog
+* Tue Dec 13 2011 Jussi Lehtola <jussilehtola@fedoraproject.org> - 3.0.1-1
+- Change sources to arpack-ng, which provides an up-to-date version of ARPACK.
+- Include examples and documentation in a new -doc package.
+
 * Mon Feb 07 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
