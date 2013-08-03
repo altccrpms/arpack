@@ -1,7 +1,7 @@
 Summary: Fortran 77 subroutines for solving large scale eigenvalue problems
 Name: arpack
 Version: 3.0.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: BSD
 Group: Development/Libraries
 URL: http://forge.scilab.org/index.php/p/arpack-ng/
@@ -108,6 +108,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
