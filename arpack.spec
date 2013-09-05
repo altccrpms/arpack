@@ -1,23 +1,16 @@
-Summary: Fortran 77 subroutines for solving large scale eigenvalue problems
-Name: arpack
-Version: 3.0.1
-Release: 5%{?dist}
-License: BSD
-Group: Development/Libraries
-URL: http://forge.scilab.org/index.php/p/arpack-ng/
-Source0: http://forge.scilab.org/upload/arpack-ng/files/arpack_%{version}.tar.gz
-BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-%if 0%{?rhel} == 4
-# The correct dependency would be the following, but it doesn't exist on RHEL4/3
-#BuildRequires: lapack-devel
-BuildRequires: gcc-g77
-BuildRequires: lapack
-%else
-BuildRequires: gcc-gfortran
-BuildRequires: atlas-devel
-%endif
+Name:		arpack
+Version:	3.1.3
+Release:	1%{?dist}
+Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
+License:	BSD
+Group:		Development/Libraries
+URL:		http://forge.scilab.org/index.php/p/arpack-ng/
+Source0:	http://forge.scilab.org/index.php/p/arpack-ng/downloads/get/arpack-ng-%{version}.tar.gz
+BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-Provides: arpack-ng = %{version}-%{release}
+BuildRequires:	gcc-gfortran
+BuildRequires:	atlas-devel
+Provides:	arpack-ng = %{version}-%{release}
 
 %description
 ARPACK is a collection of Fortran 77 subroutines designed to solve large 
@@ -32,10 +25,10 @@ algorithmic variant of the Arnoldi process called the Implicitly
 Restarted Arnoldi Method (IRAM).
 
 %package devel
-Summary: Files needed for developing arpack based applications
-Group: Development/Libraries
-Requires: arpack = %{version}-%{release}
-Provides: arpack-ng-devel = %{version}-%{release}
+Summary:	Files needed for developing arpack based applications
+Group:		Development/Libraries
+Requires:	arpack = %{version}-%{release}
+Provides:	arpack-ng-devel = %{version}-%{release}
 
 %description devel
 ARPACK is a collection of Fortran 77 subroutines designed to solve
@@ -43,8 +36,8 @@ large scale eigenvalue problems. This package contains the so
 library links used for building arpack based applications.
 
 %package doc
-Summary: Examples for the use of arpack
-Group: Documentation
+Summary:	Examples for the use of arpack
+Group:		Documentation
 %if 0%{?rhel} > 5 || 0%{?fedora} > 12
 BuildArch: noarch
 %endif
@@ -53,10 +46,10 @@ BuildArch: noarch
 This package contains examples for the use of arpack.
 
 %package static
-Summary: Static library for developing arpack based applications
-Group: Development/Libraries
-Requires: arpack-devel = %{version}-%{release}
-Provides: arpack-ng-static = %{version}-%{release}
+Summary:	Static library for developing arpack based applications
+Group:		Development/Libraries
+Requires:	arpack-devel = %{version}-%{release}
+Provides:	arpack-ng-static = %{version}-%{release}
 
 %description static
 ARPACK is a collection of Fortran 77 subroutines designed to solve
@@ -67,26 +60,24 @@ library and so links used for building arpack based applications.
 %setup -q -n arpack-ng-%{version} 
 
 %build
-%{configure} --enable-shared --enable-static \
-%if 0%{?rhel} == 4
- --with-blas="-lblas" --with-lapack="-llapack"
-%else
- --with-blas="-L%{_libdir}/atlas -lf77blas -latlas" --with-lapack="-L%{_libdir}/atlas -llapack -latlas"
-%endif
+export F77=gfortran
+%configure --enable-shared --enable-static \
+    --with-blas="-L%{_libdir}/atlas -lf77blas -latlas" \
+    --with-lapack="-L%{_libdir}/atlas -llapack -latlas"
 make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
-
 # Get rid of .la files
 rm -rf %{buildroot}%{_libdir}/*.la
+# and of the example binary
+rm %{buildroot}%{_bindir}/dnsimp
 
 %clean
 rm -rf %{buildroot}
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %files
@@ -97,6 +88,7 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-,root,root,-)
 %doc DOCUMENTS EXAMPLES
+%{_libdir}/pkgconfig/arpack.pc
 %{_libdir}/libarpack.so
 
 %files doc
@@ -108,6 +100,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Thu Sep 05 2013 Susi Lehtola <jussilehtola@fedoraproject.org> - 3.1.3-1
+- Update to 3.1.3.
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
