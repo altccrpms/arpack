@@ -1,6 +1,6 @@
 Name:		arpack
 Version:	3.1.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
 Group:		Development/Libraries
@@ -61,9 +61,14 @@ library and so links used for building arpack based applications.
 
 %build
 export F77=gfortran
+% 0%{?fedora} >= 21
+%global atlaslib -L%{_libdir}/atlas -ltatlas
+%else
+%global atlaslib -L%{_libdir}/atlas -lf77blas -latlas
+%endif
 %configure --enable-shared --enable-static \
-    --with-blas="-L%{_libdir}/atlas -lf77blas -latlas" \
-    --with-lapack="-L%{_libdir}/atlas -llapack -latlas"
+    --with-blas="%{atlaslib}" \
+    --with-lapack="%{atlaslib}"
 make %{?_smp_mflags}
 
 %install
@@ -100,6 +105,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Sun Sep 21 2013 Orion Poplawski <orion@cora.nwra.com> - 3.1.3-2
+- Rebuild for atlas 3.10 using threaded library
+
 * Thu Sep 05 2013 Susi Lehtola <jussilehtola@fedoraproject.org> - 3.1.3-1
 - Update to 3.1.3.
 
