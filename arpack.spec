@@ -105,7 +105,7 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
-* Sun Sep 21 2013 Orion Poplawski <orion@cora.nwra.com> - 3.1.3-2
+* Sat Sep 21 2013 Orion Poplawski <orion@cora.nwra.com> - 3.1.3-2
 - Rebuild for atlas 3.10 using threaded library
 
 * Thu Sep 05 2013 Susi Lehtola <jussilehtola@fedoraproject.org> - 3.1.3-1
