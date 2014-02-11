@@ -61,7 +61,7 @@ library and so links used for building arpack based applications.
 
 %build
 export F77=gfortran
-%if 0%{?fedora} >= 21
+%if 0%{?fedora} >= 21 || 0%{?rhel} >= 7
 %global atlaslib -L%{_libdir}/atlas -ltatlas
 %else
 %global atlaslib -L%{_libdir}/atlas -lf77blas -latlas
