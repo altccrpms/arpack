@@ -1,11 +1,11 @@
 Name:		arpack
-Version:	3.1.3
-Release:	4%{?dist}
+Version:	3.1.5
+Release:	1%{?dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
 Group:		Development/Libraries
 URL:		http://forge.scilab.org/index.php/p/arpack-ng/
-Source0:	http://forge.scilab.org/index.php/p/arpack-ng/downloads/get/arpack-ng-%{version}.tar.gz
+Source0:	http://forge.scilab.org/index.php/p/arpack-ng/downloads/get/arpack-ng_%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	gcc-gfortran
@@ -75,9 +75,10 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 # Get rid of .la files
-rm -rf %{buildroot}%{_libdir}/*.la
-# and of the example binary
-rm %{buildroot}%{_bindir}/dnsimp
+rm -r %{buildroot}%{_libdir}/*.la
+
+%check
+make %{?_smp_mflags} check
 
 %clean
 rm -rf %{buildroot}
@@ -105,6 +106,12 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Fri Mar 06 2015 Dominik Mierzejewski <rpm@greysector.net> - 3.1.5-1
+- update to 3.1.5
+- fix source URL
+- example binary is no longer installed by default
+- enable tests
+
 * Fri Aug 15 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
