@@ -79,6 +79,7 @@ rm -r %{buildroot}%{_libdir}/*.la
 
 %check
 make %{?_smp_mflags} check
+pushd EXAMPLES ; make clean ; popd
 
 %clean
 rm -rf %{buildroot}
@@ -93,7 +94,6 @@ rm -rf %{buildroot}
 
 %files devel
 %defattr(-,root,root,-)
-%doc DOCUMENTS EXAMPLES
 %{_libdir}/pkgconfig/arpack.pc
 %{_libdir}/libarpack.so
 
@@ -111,6 +111,8 @@ rm -rf %{buildroot}
 - fix source URL
 - example binary is no longer installed by default
 - enable tests
+- don't duplicate documentation and examples in -devel
+- clean binaries in EXAMPLES after running testsuite
 
 * Fri Aug 15 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
