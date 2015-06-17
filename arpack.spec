@@ -1,6 +1,6 @@
 Name:		arpack
 Version:	3.1.5
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
 Group:		Development/Libraries
@@ -106,6 +106,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Fri Mar 06 2015 Dominik Mierzejewski <rpm@greysector.net> - 3.1.5-1
 - update to 3.1.5
 - fix source URL
