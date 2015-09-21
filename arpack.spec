@@ -1,11 +1,14 @@
+%global commit 8fc8fbe34991b97fb4326d7d34c3ff37c94cc770
+%global shortcommit %(c=%{commit}; echo ${c:0:7})
+
 Name:		arpack
-Version:	3.1.5
-Release:	2%{?dist}
+Version:	3.2.0
+Release:	1.%{shortcommit}git%{?dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
 Group:		Development/Libraries
-URL:		http://forge.scilab.org/index.php/p/arpack-ng/
-Source0:	http://forge.scilab.org/index.php/p/arpack-ng/downloads/get/arpack-ng_%{version}.tar.gz
+URL:		https://github.com/opencollab/arpack-ng
+Source0:	https://github.com/opencollab/arpack-ng/archive/%{commit}/arpack-ng-%{commit}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	gcc-gfortran
@@ -57,7 +60,7 @@ large scale eigenvalue problems. This package contains the static
 library and so links used for building arpack based applications.
 
 %prep
-%setup -q -n arpack-ng-%{version} 
+%setup -q -n arpack-ng-%{commit} 
 
 %build
 export F77=gfortran
@@ -106,6 +109,10 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Mon Sep 21 2015 Susi Lehtola <jussilehtola@fedoraproject.org> - 3.2.0-1.8fc8fbe3git
+- Update source URL.
+- Update to 3.2.0.
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
