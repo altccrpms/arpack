@@ -1,8 +1,8 @@
-%global commit 8fc8fbe34991b97fb4326d7d34c3ff37c94cc770
+%global commit b0f7a6008f37f913e97f67c826fc37fa9758f626
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:		arpack
-Version:	3.2.0
+Version:	3.3.0
 Release:	1.%{shortcommit}git%{?dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
@@ -13,6 +13,7 @@ BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	gcc-gfortran
 BuildRequires:	atlas-devel
+BuildRequires:	libtool
 Provides:	arpack-ng = %{version}-%{release}
 
 %description
@@ -41,7 +42,7 @@ library links used for building arpack based applications.
 %package doc
 Summary:	Examples for the use of arpack
 Group:		Documentation
-%if 0%{?rhel} > 5 || 0%{?fedora} > 12
+%if 0%{?rhel} > 5 || 0%{?fedora}
 BuildArch: noarch
 %endif
 
@@ -61,10 +62,11 @@ library and so links used for building arpack based applications.
 
 %prep
 %setup -q -n arpack-ng-%{commit} 
+autoreconf -vif
 
 %build
 export F77=gfortran
-%if 0%{?fedora} >= 21 || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %global atlaslib -L%{_libdir}/atlas -ltatlas
 %else
 %global atlaslib -L%{_libdir}/atlas -lf77blas -latlas
@@ -109,6 +111,11 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Mon Oct 19 2015 Dominik Mierzejewski <rpm@greysector.net> - 3.3.0-1.b0f7a600git
+- Update to 3.3.0
+- BR: libtool and call autoreconf
+- simplify some conditions
+
 * Mon Sep 21 2015 Susi Lehtola <jussilehtola@fedoraproject.org> - 3.2.0-1.8fc8fbe3git
 - Update source URL.
 - Update to 3.2.0.
