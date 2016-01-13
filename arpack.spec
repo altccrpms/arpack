@@ -93,21 +93,17 @@ rm -rf %{buildroot}
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %doc CHANGES COPYING
 %{_libdir}/libarpack.so.*
 
 %files devel
-%defattr(-,root,root,-)
 %{_libdir}/pkgconfig/arpack.pc
 %{_libdir}/libarpack.so
 
 %files doc
-%defattr(-,root,root,-)
 %doc EXAMPLES/ DOCUMENTS/
 
 %files static
-%defattr(-,root,root,-)
 %{_libdir}/libarpack.a
 
 %changelog
