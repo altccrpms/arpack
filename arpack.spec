@@ -3,7 +3,7 @@
 
 Name:		arpack
 Version:	3.3.0
-Release:	1.%{shortcommit}git%{?dist}
+Release:	2.%{shortcommit}git%{?dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
 Group:		Development/Libraries
@@ -107,6 +107,9 @@ rm -rf %{buildroot}
 %{_libdir}/libarpack.a
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.3.0-2.b0f7a60git
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Mon Oct 19 2015 Dominik Mierzejewski <rpm@greysector.net> - 3.3.0-1.b0f7a600git
 - Update to 3.3.0
 - BR: libtool and call autoreconf
