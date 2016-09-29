@@ -5,8 +5,8 @@
 conflict	@NAME@
 prepend-path 	PATH 		@PREFIX@/bin
 prepend-path	MANPATH		@PREFIX@/share/man
-prepend-path 	LD_LIBRARY_PATH @PREFIX@/@LIB@
-prepend-path 	PKG_CONFIG_PATH @PREFIX@/@LIB@/pkgconfig
+prepend-path 	LD_LIBRARY_PATH @LIBDIR@
+prepend-path 	PKG_CONFIG_PATH @LIBDIR@/pkgconfig
 setenv		@NAME_UC@_HOME	@PREFIX@
 setenv		@NAME_UC@_INCLUDE	@PREFIX@/include
-setenv		@NAME_UC@_LIB	@PREFIX@/@LIB@
+setenv		@NAME_UC@_LIB	@LIBDIR@
