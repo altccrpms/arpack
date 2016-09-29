@@ -1,8 +1,12 @@
 %global commit b0f7a6008f37f913e97f67c826fc37fa9758f626
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
-Name:		arpack
-Version:	3.4.0
+%global shortname arpack
+%global ver 3.4.0
+%?altcc_init
+
+Name:		%{shortname}%{?altcc_pkg_suffix}
+Version:	%{ver}
 Release:	1%{dist}
 Summary:	Fortran 77 subroutines for solving large scale eigenvalue problems
 License:	BSD
@@ -10,11 +14,16 @@ Group:		Development/Libraries
 URL:		https://github.com/opencollab/arpack-ng
 #Source0:	https://github.com/opencollab/arpack-ng/archive/%{commit}/arpack-ng-%{commit}.tar.gz
 Source0:	https://github.com/opencollab/arpack-ng/archive/%{version}/arpack-ng-%{version}.tar.gz
+Source1:        module.in
 
+%if 0%{?altcc}
 BuildRequires:	gcc-gfortran
 BuildRequires:	atlas-devel
+%endif
 BuildRequires:	libtool
 Provides:	arpack-ng = %{version}-%{release}
+%?altcc_reqmodules
+%?altcc_provide
 
 %description
 ARPACK is a collection of Fortran 77 subroutines designed to solve large 
@@ -31,8 +40,9 @@ Restarted Arnoldi Method (IRAM).
 %package devel
 Summary:	Files needed for developing arpack based applications
 Group:		Development/Libraries
-Requires:	arpack = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 Provides:	arpack-ng-devel = %{version}-%{release}
+%{?altcc:%altcc_provide devel}
 
 %description devel
 ARPACK is a collection of Fortran 77 subroutines designed to solve
@@ -45,6 +55,7 @@ Group:		Documentation
 %if 0%{?rhel} > 5 || 0%{?fedora}
 BuildArch: noarch
 %endif
+%{?altcc:%altcc_provide doc}
 
 %description doc
 This package contains examples for the use of arpack.
@@ -52,8 +63,9 @@ This package contains examples for the use of arpack.
 %package static
 Summary:	Static library for developing arpack based applications
 Group:		Development/Libraries
-Requires:	arpack-devel = %{version}-%{release}
+Requires:	%{name}-devel = %{version}-%{release}
 Provides:	arpack-ng-static = %{version}-%{release}
+%{?altcc:%altcc_provide static}
 
 %description static
 ARPACK is a collection of Fortran 77 subroutines designed to solve
@@ -65,11 +77,19 @@ library and so links used for building arpack based applications.
 autoreconf -vif
 
 %build
-export F77=gfortran
+[ -z "$FC" ] && export FC=gfortran
+export F77=$FC
+%if "%{?altcc_cc_name}" == ""
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %global atlaslib -L%{_libdir}/atlas -ltatlas
 %else
 %global atlaslib -L%{_libdir}/atlas -lf77blas -latlas
+%endif
+%endif
+%if "%{?altcc_cc_name}" == "intel"
+# https://github.com/opencollab/arpack-ng/issues/49
+export FFLAGS=$(echo $FFLAGS | sed 's/-warn all//')
+%global atlaslib -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -liomp5 -lpthread -lm -ldl
 %endif
 %configure --enable-shared --enable-static \
     --with-blas="%{atlaslib}" \
@@ -82,6 +102,9 @@ make install DESTDIR=%{buildroot}
 # Get rid of .la files
 rm -r %{buildroot}%{_libdir}/*.la
 
+%{?altcc:%altcc_writemodule %SOURCE1}
+%?altcc_doc
+
 %check
 make %{?_smp_mflags} check
 pushd EXAMPLES ; make clean ; popd
@@ -93,15 +116,18 @@ rm -rf %{buildroot}
 %postun -p /sbin/ldconfig
 
 %files
+%{?altcc:%altcc_files -dm %{_libdir}}
 %doc CHANGES COPYING
 %{_libdir}/libarpack.so.*
 
 %files devel
+%{?altcc:%altcc_files %{_libdir}/pkgconfig}
 %{_libdir}/pkgconfig/arpack.pc
 %{_libdir}/libarpack.so
 
 %files doc
 %doc EXAMPLES/ DOCUMENTS/
+%{?altcc:%altcc_files -d}
 
 %files static
 %{_libdir}/libarpack.a
