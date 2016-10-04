@@ -87,14 +87,12 @@ export F77=$FC
 %endif
 %endif
 %if "%{?altcc_cc_name}" == "intel"
-# https://github.com/opencollab/arpack-ng/issues/49
-export FFLAGS=$(echo $FFLAGS | sed 's/-warn all//')
 %global atlaslib -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -liomp5 -lpthread -lm -ldl
 %endif
 %configure --enable-shared --enable-static \
     --with-blas="%{atlaslib}" \
     --with-lapack="%{atlaslib}"
-make %{?_smp_mflags}
+%make_build
 
 %install
 rm -rf %{buildroot}
@@ -106,7 +104,9 @@ rm -r %{buildroot}%{_libdir}/*.la
 %?altcc_doc
 
 %check
-make %{?_smp_mflags} check
+# Cannot be parallel with -warn all 
+# https://github.com/opencollab/arpack-ng/issues/49
+make check
 pushd EXAMPLES ; make clean ; popd
 
 %clean
